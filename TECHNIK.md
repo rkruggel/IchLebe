@@ -5,6 +5,7 @@ __IchLebe__ ist eine Client-Server Applikation
 ## Server
 
 Der Server ist eine Api geschrieben in Python und Flask.
+
 Prog:       Python
 Module:     Flask
 Datenbank:  Sqlite
