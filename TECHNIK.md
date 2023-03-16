@@ -24,9 +24,10 @@ Dyndns stellt eine Dynamische IP bereit.
 
 ## Client
 Der Client ist eine Handyapp.
+
 Prog:       Html, Javascript
 Module:     
 
-
+.
 
 
