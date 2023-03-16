@@ -6,11 +6,9 @@ __IchLebe__ ist eine Client-Server Applikation
 
 Der Server ist eine Api geschrieben in Python und Flask.
 
-Prog:       Python
-
-Module:     Flask
-
-Datenbank:  Sqlite
+    Prog:       Python
+    Module:     Flask
+    Datenbank:  Sqlite
 
 ### Hardware
 Die Hardware ist ein Raspberry PI
@@ -25,12 +23,14 @@ Ich hoste bei mir zu Hause.
 Dyndns stellt eine Dynamische IP bereit.
 
 
+
+
 ## Client
 Der Client ist eine Handyapp.
 
-Prog:       Html, Javascript
-Module:     
+    Prog:       Html, Javascript
+    Module:     
+    OS:         Android
 
-.
 
 
