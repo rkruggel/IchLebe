@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h1>Das ist eine HTML Seite</h1>
+
+    {% set anzahl_personen = namen | length %}
+
+    {{ x }}
+    {{ namen }}
+
+    <div>
+        <p>{{ dict_data["name"] }} ist {{ dict_data["age"] }}</p>      
+    </div>
+
+    {% if x > 10 %}
+        <p>Variable ist größer als 10</p>
+    {% else %}
+    <p>Variable ist NICHT größer als 10</p>
+    {% endif %}
+
+    <h2>Anzahl Personen: {{anzahl_personen}}</h2>
+    {% for person in namen %}
+    <p>{{ loop.index0 }} {{person | title}}</p>
+    {% endfor %}
+
+</bod>
+</http>

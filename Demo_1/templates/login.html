@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+<form action="/login" method="POST">
+    <label for="fname">Vorname</label>
+    <input type="text" id="fname" name="fname" placeholder="Vorname">
+    <label for="lname">Nachname</label>
+    <input type="text" id="lname" name="lname" placeholder="Nachname">
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock content %}
+
+
+
+
