@@ -21,10 +21,18 @@ Die App starten. Es wird kein Webserver benötigt. Flask/Python bringt einen Web
 
 ### In der Entwicklung
 
-Starten wären der Entwicklung.
+Starten wärend der Entwicklung.
 
-In der Konsole folgendes ausführen:
+Es gibt mehrere Möglichkeiten das Programm 
+
+1. In der Konsole folgendes ausführen:
     flask --app main.py --debug run --port 5000
+
+2. In der Main.py / App.py
+    if __name__ == "__main__":
+        app.run(host="127.0.0.1", port=5005, debug=True)
+
+Die zweite Möglichkeit hat den Nachteil, dass sie bei einem Programmierfehler abbricht.
 
 
 ### in der Bereitstellung

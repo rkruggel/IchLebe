@@ -1,8 +1,8 @@
 '''
 Demo
 
-Prog:       Demo_2
-Date:       17.03.2023
+Prog:       Server
+Date:       18.03.2023
 
 Youtube:    Web Development mit Flask - Full Stack App mit SQLAlchemy & Bootstrap
             Coding Crashkurse
@@ -12,12 +12,18 @@ Youtube:    Web Development mit Flask - Full Stack App mit SQLAlchemy & Bootstra
 
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+#from flask_wtf import FlaskForm
+# from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from wtforms.validators import DataRequired, Length
-from flask_sqlalchemy import SQLAlchemy
+#from wtforms.validators import DataRequired, Length
+# from flask_sqlalchemy import SQLAlchemy
 from bcrypt import hashpw, checkpw, gensalt
+
+
+from rkdb.db import db, User
+from rkforms.login import RegisterForm, LoginForm
+
+
 
 def get_hashed_pw(plain_password):
     return hashpw(plain_password.encode("utf-8"), gensalt())
@@ -26,7 +32,7 @@ def check_password(plain_password, hashed_password):
     return checkpw(plain_password.encode("utf-8"), hashed_password=hashed_password)
 
 
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 
 app = Flask(__name__)
@@ -43,31 +49,34 @@ def load_user(user_id):
 
 db.init_app(app)
 
-# Model
-# User
-class User(db.Model, UserMixin):
-    __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    fullname = db.Column(db.String)
+# # Model
+# # User
+# class User(db.Model, UserMixin):
+#     __tablename__ = "users"
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String, unique=True, nullable=False)
+#     password = db.Column(db.String, nullable=False)
+#     fullname = db.Column(db.String)
 
-# Form
-# Register
-class RegisterForm(FlaskForm):
-    fullname = StringField("Fullname")
-    username = StringField("Username", validators=[DataRequired(), Length(3,10)])
-    password = PasswordField("Passwort", validators=[DataRequired(), Length(2,30)])
-    passwordrepeated = PasswordField("Wiederhole Passwort", validators=[DataRequired(), Length(2,30)])
-    submit = SubmitField()
 
-# Form
-# Login
-class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired(), Length(3,10)])
-    password = PasswordField("Passwort", validators=[DataRequired(), Length(2,30)])
-    remember = BooleanField("Remember me?")
-    submit = SubmitField()
+# # Form
+# # Register
+# class RegisterForm(FlaskForm):
+#     fullname = StringField("Fullname")
+#     username = StringField("Username", validators=[DataRequired(), Length(3,10)])
+#     password = PasswordField("Passwort", validators=[DataRequired(), Length(2,30)])
+#     passwordrepeated = PasswordField("Wiederhole Passwort", validators=[DataRequired(), Length(2,30)])
+#     submit = SubmitField()
+
+# # Form
+# # Login
+# class LoginForm(FlaskForm):
+#     username = StringField("Username", validators=[DataRequired(), Length(3,10)])
+#     password = PasswordField("Passwort", validators=[DataRequired(), Length(2,30)])
+#     remember = BooleanField("Remember me?")
+#     submit = SubmitField()
+
+
 
 # Erstellt die Datenbank
 with app.app_context():
@@ -89,7 +98,7 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = get_hashed_pw(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password)
+        new_user = User(fullname=form.fullname.data, username=form.username.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("index"))
@@ -114,14 +123,32 @@ def login():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", user=current_user.username)
+    pass
+    return render_template("dashboard.html", fullname=current_user.fullname, user=current_user.username)
 
 
+# Route
+# Logout
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("index"))
 
+
+
+
+
+
+# programmstart für die Entwicklung
+# starten mit: python3 app.py
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5005, debug=True)
+
+# programmstart in der Bereitstellung
+# starten mit: python3 app.py
+# if __name__ == '__main__':
+#     from waitress import serve
+#     serve(app, host='0.0.0.0', port=8080)
 
 
