@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+{% if user %}
+    <h2>Eingelogged als User: {{user}}</h2>
+    <p>Willst du zum Dashboard?</p>
+    <a href="{{url_for('dashboard')}}">Dashboard</a>
+{% else %}
+    <h2>Du bist nicht eingelogged</h2>
+    <p>Willst du einen Useraccount erstellen oder dich einloggen?</p>
+    <a href="{{url_for('register')}}">Registrieren</a>
+    <a href="{{url_for('login')}}">Login</a>
+{% endif %}
+
+
+{% endblock content %}

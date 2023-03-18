@@ -49,6 +49,26 @@ Der Server ist eine Api geschrieben in Python und Flask.
     Module:     Flask
     Datenbank:  Sqlite
 
+### imports
+
+    pip install flask
+    pip install bootstrap-flask
+    pip install flask-wtf
+    pip install wtforms             (Eventuell schon installiert)
+    pip install flask-sqlalcemy
+    pip install flask-login
+    pip install bcrypt
+
+### Docu
+
+Die Doku
+    https://getbootstrap.com/docs/5.0/components/navbar/
+
+Die CDN
+    https://getbootstrap.com/docs/5.0/getting-started/introduction/
+
+
+
 ### Hardware
 Die Hardware ist ein Raspberry PI
 
