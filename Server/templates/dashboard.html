@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    Dashboard
+    <h1>Dashboard</h1>
 {% endblock header %}
 
 
 
 
 {% block content %}
-    <h3>Eingelogged als:  {{user}} {{fullname}}</h3>
+    <h3>Eingelogged als:  {{user}} [ {{vorname}} {{ nachname }} ]</h3>
 
     <p>{{ get_flashed_messages()[0] }}</p>
 
