@@ -18,9 +18,10 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 #from wtforms.validators import DataRequired, Length
 # from flask_sqlalchemy import SQLAlchemy
 from bcrypt import hashpw, checkpw, gensalt
+from datetime import date, datetime
 
 
-from rkdb.db import db, User
+from rkdb.db import db, Users, Messages, Lebens
 from rkforms.login import RegisterForm, LoginForm
 
 
@@ -37,11 +38,13 @@ def check_password(plain_password, hashed_password):
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "kldsköfhlakvbdskhfj22342tqg"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ichlebe.db"
 bootstrap = Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"      # die Route Classname
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -80,7 +83,10 @@ db.init_app(app)
 
 # Erstellt die Datenbank
 with app.app_context():
+    db.drop_all()
     db.create_all() 
+
+
 
 
 # Route
@@ -98,7 +104,7 @@ def register():
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = get_hashed_pw(form.password.data)
-        new_user = User(fullname=form.fullname.data, username=form.username.data, password=hashed_password)
+        new_user = Users(fullname=form.fullname.data, username=form.username.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("index"))
@@ -110,7 +116,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Users.query.filter_by(username=form.username.data).first()
         if user and check_password(form.password.data, user.password):
             login_user(user, remember=form.remember.data)
             flash("Du wurdest erfolgreich eingelogged")
@@ -139,11 +145,73 @@ def logout():
 
 
 
+# demodaten einfügen
+@app.route("/AddDemodata")
+def demodaten():
+    '''
+      Demodaten einfügen
+    '''
+
+    #print (date.today())
+    # Userdaten erzeugen wenn keine vorhanden sind
+    co = Users.query.count()
+    if co == 0:
+        newdata = Users(id=100, username="rkruggel", password=get_hashed_pw("12"), 
+                        vorname="Roland", nachname="Kruggel", strasse="Beverstr 12", ort="58553 Halver",
+                        email="rkruggel@bbf7.de", geboren=date(1959, 1, 2), aktiv=True, 
+                        telefon="02353 6699940", handy="0174 2170044", admin=True, 
+                        created=datetime.now(), updated=datetime.now() )
+        db.session.add(newdata)
+        newdata = Users(id=101, username="pkruggel", password=get_hashed_pw("12"), 
+                        vorname="Petra", nachname="Kruggel", strasse="Beverstr 12", ort="58553 Halver",
+                        email="pkruggel@gmx.de", geboren=date(1954, 2, 3), aktiv=True, 
+                        telefon="02353 6699940", handy="01525 2637011", admin=False, 
+                        created=datetime.now(), updated=datetime.now() )        
+        db.session.add(newdata)
+        newdata = Users(id=102, username="tkarrer", password=get_hashed_pw("12"), 
+                        vorname="Tanja", nachname="Orthen", strasse="", ort="",
+                        email="orthtaja@gmx.de", geboren=date(1989, 3, 12), aktiv=False, 
+                        telefon="02183 3269586", handy="0176 39153897", admin=False, 
+                        created=datetime.now(), updated=datetime.now() )
+        db.session.add(newdata)
+        db.session.commit()
+
+    co = Messages.query.count()
+    if co == 0:
+        newdata = Messages(user_id=100, timeAblauf=25*60, infotype="sms", aktiv=True, 
+                           handy="0174 2541225", text="Schnell schnell" )
+        db.session.add(newdata)
+        newdata = Messages(user_id=100, timeAblauf=26*60, infotype="sms", aktiv=True, 
+                           handy="0174 51254124", text="avanti, es eilt" )
+        db.session.add(newdata)
+        newdata = Messages(user_id=100, timeAblauf=30*60, infotype="sms", aktiv=False, 
+                           handy="0174 1441522", text="Hilfe Polizei" )
+        db.session.add(newdata)
+        newdata = Messages(user_id=101, timeAblauf=15*60, infotype="sms", aktiv=True, 
+                           handy="0174 1985214", text="Schnell bei Oma melden" )
+        db.session.add(newdata)
+        db.session.commit()
+
+    co = Lebens.query.count()
+    if co == 0:
+        newdata = Lebens(user_id=100, zeitstempel=datetime.now(), koordinate="51.0010, 23.9389" )
+        db.session.add(newdata)
+        newdata = Lebens(user_id=101, zeitstempel=datetime.now(), koordinate="51.0010, 23.9389" )
+        db.session.add(newdata)
+        db.session.commit()
+
+
+    return ("Erg: " + datetime.now().strftime('%d.%m/.%Y %H:%M:%S'))
+
+
+#demodaten()
+
 
 # programmstart für die Entwicklung
 # starten mit: python3 app.py
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5005, debug=True)
+    #app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run()
 
 # programmstart in der Bereitstellung
 # starten mit: python3 app.py
