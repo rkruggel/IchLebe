@@ -5,6 +5,45 @@
 {% endblock header %}
 
 
+
+
 {% block content %}
-    <h3>{{info}}</h3>
+<div>
+    <p class="text-black-50">Change the Userdate</p>
+
+    <form action="/userdata" method="POST">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-9"">
+                    <input type="text" class="form-control" id="suchenfeld" name="suchenfeld"
+                        aria-describedby="" placeholder="Suchtext" >
+                </div>
+                <div class=col-3>                    
+                    <button class="btn btn-primary" type="submit"><span class="bi bi-shield-plus"></span> | Suchen</button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <br/>
+
+    
+
+    <!-- <form action="/usersingledata" method="POST" -->
+        <ul class="list-group list-group-horizontal">
+            {% for ii in userliste %}
+            <li class="list-group-item">  <a href="{{ url_for('usersingledata', userlogin=ii.username) }}" class="link-primary">{{ ii.username }}</a></li>              
+            {% endfor %}
+        </ul>
+    <!-- </form> -->
+
+
+</div>
+
+{% if error %}
+    {{error}}
+{% endif %}
+
+
 {% endblock content %}

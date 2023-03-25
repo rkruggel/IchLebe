@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>User SingleData</h1>
+{% endblock header %}
+
+
+
+
+{% block content %}
+<div>
+    <p class="text-black-50">Change the UserSingledate</p>
+
+    <form action="/userdata" method="POST">
+        <div class="form-group">
+            <div class="row">
+                <div class="col"">
+                    <input class="form-control" type="text" id="username" name="username" value="{{userdata.username}}" aria-describedby="" placeholder="Username" >
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"">
+                <input class="form-control" type="text" id="vorname" name="vorname" value="{{userdata.vorname}}" aria-describedby="" placeholder="Vorname" >
+            </div>
+            <div class="row">
+                <div class="col"">
+                    <input class="form-control" type="text"id="nachname" name="nachname" value="{{userdata.nachname}}" aria-describedby="" placeholder="Nachname" >
+                </div>
+            </div>
+
+            <div class=col-3>                    
+                <button class="btn btn-primary" type="submit"><span class="bi bi-check-lg"></span> | Suchen</button>
+            </div>
+          
+        </div>
+
+    </form>
+
+    <br/>
+
+
+</div>
+
+{% if error %}
+    {{error}}
+{% endif %}
+
+
+{% endblock content %}

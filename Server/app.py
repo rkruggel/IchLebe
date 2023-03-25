@@ -10,7 +10,7 @@ Youtube:    Web Development mit Flask - Full Stack App mit SQLAlchemy & Bootstra
 '''
 
 
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 #from flask_wtf import FlaskForm
 # from wtforms import StringField, PasswordField, BooleanField, SubmitField
@@ -23,7 +23,9 @@ from datetime import date, datetime
 
 from rkdb.db import db, Users, Messages, Lebens
 from rkforms.login import RegisterForm, LoginForm
+from rkforms.admin import *
 
+from sqlalchemy import and_, select
 
 
 def get_hashed_pw(plain_password):
@@ -39,6 +41,7 @@ def check_password(plain_password, hashed_password):
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "kldsköfhlakvbdskhfj22342tqg"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ichlebe.db"
+#app.config["SQLALCHEMY_ECHO"] = True
 bootstrap = Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -129,7 +132,15 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = Users.query.filter_by(username=form.username.data).first()
+        # Hier wird der Userer entweder mit dem Usernamen gesucht oder mit der emailadresse
+        if '@' in form.username.data:
+            print ("> eine email")
+            user = Users.query.filter_by(email=form.username.data).first()
+        else:
+            print ("> ein username")
+            user = Users.query.filter_by(username=form.username.data).first()
+
+        # check password
         if user and check_password(form.password.data, user.password):
             login_user(user, remember=form.remember.data)
             flash("Du wurdest erfolgreich eingelogged")
@@ -144,7 +155,6 @@ def login():
 def dashboard():
     return render_template("dashboard.html", vorname=current_user.vorname, nachname=current_user.nachname, user=current_user.username)
 
-
 # Route
 # Logout
 @app.route("/logout")
@@ -152,7 +162,6 @@ def dashboard():
 def logout():
     logout_user()
     return redirect(url_for("index"))
-
 
 # demodaten einfügen
 @app.route("/adddemodata")
@@ -215,13 +224,93 @@ def adddemodata():
 
     return render_template("info.html", infotext="Info: Datenbank zurückgesetzt: " + datetime.now().strftime('%d.%m.%Y %H:%M:%S'))
 
+# Route
+# User Data
+@app.route("/userdata", methods = ["GET", "POST"])
+#@login_required
+def userdata():
+
+    if request.method == "GET":
+        print (">>GET")
+
+    if request.method == "POST":
+        print (">> POST")
+
+        suchenfeld = request.form.get("suchenfeld")
+        print (f">> {suchenfeld}")
+
+        #userliste1 = Users.query.fetchall()      #filter_by(username=form.username.data).first()
+        #userliste2 = db.session.execute(db.select(Users).order_by(Users.nachname)).scalars()
+
+        #stmt = select(Users)   #.username,Users.vorname,Users.nachname])  
+        #stmt= stmt.where(and_(Users.columns.vorname=='joe',Users.columns.nachname==100)  
+        #with db.connect() as con:
+        #for row in db.execute(stmt):  
+        #    print(row)
+
+        # userliste = db.session.execute(
+        #     select(Users.username, Users.vorname + " " + Users.nachname).where(Users.aktiv==True)
+        # ).all()
+
+        # einen datensatz lesen mit ID
+        #print ("-----------------------------------------------------------------------------------------------------------------------")
+        userliste = db.session.query(Users).filter(Users.username.like(f'{suchenfeld}'))
+        for ii in userliste:
+            print (f">>{ii.vorname} {ii.nachname}")
+        # userliste = db.session.query(Users).filter(Users.username == f"{suchenfeld}")
+        # for ii in userliste:
+        #     print (f">>{ii.vorname} {ii.nachname}")
+
+
+
+        # print ("-----------------------------------------------------------------------------------------------------------------------")
+        # ul1 = db.get_or_404(Users, 102)
+        # erg1 = ul1.username
+        # print ("------------")
+        # print (f">> {ul1}")
+        # print (f">> {erg1}")
+        # alle Datensätze lesen
+        # ul2 = db.session.query(Users).all()
+        # print ("------------")
+        # print (f">> {ul2}")
+        # for ii in ul2:
+        #     erg2 = ii.vorname + " " + ii.nachname
+        #     print (f">> {erg2}")
+
+        # ??
+        # fii  = [(x.username, x.vorname + " " + x.nachname) for x in userliste]
+        # form = UserdataForm(obj=fii)
+        # form.s1.choices= userliste  # [('cpp', 'C++'), ('py', 'Python'), ('text', 'Plain Text')]
+        # form.remember=True
+
+        return render_template("admin/userdata.html", userliste=userliste)
+
+    return render_template("admin/userdata.html")
+
 
 # Route
 # User Data
-@app.route("/userdata")
-#@login_required
-def userdata():
-    return render_template("admin/userdata.html", info="n/a")
+@app.route("/usersingledata/<userlogin>", methods = ["GET", "POST"])
+def usersingledata(userlogin):
+    print (f">>> {userlogin}  {request.method}")
+
+
+    if request.method == "GET":
+        print("get")
+        userdata = db.session.query(Users).filter(Users.username == userlogin).scalar()
+        pass
+        return render_template("admin/usersingledata.html", userdata=userdata)
+
+    if request.method == "POST":
+        print("post")
+        # daten aus der Form lesen
+        # username = request.form.get("username")
+        # vorname = request.form.get("vorname")
+        # nachname = request.form.get("nachname")
+        return ""
+
+
+
 
 # Route
 # Alarmzeiten
